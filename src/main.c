@@ -730,6 +730,11 @@ int main(int argc, char *argv[]) {
         tls_init();
     }
 
+    if (!*port && !*tlsport && !*unixsock) {
+        printf("Need to specify at least one valid port, tlsport or socket option\n");
+        exit(1);
+    }
+
     if (*auth) {
         useauth = true;
     }
