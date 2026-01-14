@@ -472,6 +472,9 @@ int main(int argc, char *argv[]) {
     version = GITVERS;
     githash = GITHASH;
 
+    // Temporary vars
+    uint64_t tport;
+
 #ifdef __EMSCRIPTEN__
     port = "0";
     usecas = "yes";
@@ -710,14 +713,26 @@ int main(int argc, char *argv[]) {
 
     if (!*port || strcmp(port, "0") == 0) {
         port = "";
+    } else {
+        if (!parse_u64(port, strlen(port), &tport) || tport > 0xffff) {
+            INVALID_FLAG("port", port);
+        }
     }
 
     if (!*tlsport || strcmp(tlsport, "0") == 0) {
         usetls = false;
         tlsport = "";
     } else {
+        if (!parse_u64(tlsport, strlen(tlsport), &tport) || tport > 0xffff) {
+            INVALID_FLAG("tlsport", tlsport);
+        }
         usetls = true;
         tls_init();
+    }
+
+    if (!*port && !*tlsport && !*unixsock) {
+        printf("Need to specify at least one valid port, tlsport or socket option\n");
+        exit(1);
     }
 
     if (*auth) {
