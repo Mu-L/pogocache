@@ -951,9 +951,9 @@ static int listen_tcp(const char *host, const char *port, bool reuseport,
     hints.ai_protocol = IPPROTO_TCP;
     ret = getaddrinfo(host, port, &hints, &addrs);
     if (ret != 0) {
-        fprintf(stderr, "# getaddrinfo: %s: %s:%s", gai_strerror(ret), host,
+        fprintf(stderr, "# getaddrinfo: %s: %s:%s\n", gai_strerror(ret), host,
             port);
-        abort();
+        exit(1);
     }
     struct addrinfo *ainfo = addrs;
     while (ainfo->ai_family != PF_INET) {
@@ -963,37 +963,37 @@ static int listen_tcp(const char *host, const char *port, bool reuseport,
     int fd = socket(ainfo->ai_family, ainfo->ai_socktype, ainfo->ai_protocol);
     if (fd == -1) {
         perror("# socket(tcp)");
-        abort();
+        exit(1);
     }
     if (reuseport) {
         ret = setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &(int){1}, 
             sizeof(int));
         if (ret == -1) {
             perror("# setsockopt(reuseport)");
-            abort();
+            exit(1);
         }
     }
 #ifndef __EMSCRIPTEN__
     ret = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &(int){1},sizeof(int));
     if (ret == -1) {
         perror("# setsockopt(reuseaddr)");
-        abort();
+        exit(1);
     }
 #endif
     ret = setnonblock(fd, true);
     if (ret == -1) {
         perror("# setnonblock");
-        abort();
+        exit(1);
     }
     ret = bind(fd, ainfo->ai_addr, ainfo->ai_addrlen);
     if (ret == -1) {
-        fprintf(stderr, "# bind(tcp): %s:%s", host, port);
-        abort();
+        fprintf(stderr, "# bind(tcp): %s:%s\n", host, port);
+        exit(1);
     }
     ret = listen(fd, backlog);
     if (ret == -1) {
-        fprintf(stderr, "# listen(tcp): %s:%s", host, port);
-        abort();
+        fprintf(stderr, "# listen(tcp): %s:%s\n", host, port);
+        exit(1);
     }
     freeaddrinfo(addrs);
     return fd;
