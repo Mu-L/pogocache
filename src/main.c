@@ -172,7 +172,7 @@ static void showhelp(FILE *file) {
     HOPT("--uring yes/no", "use uring (linux)", "%s", uring);
     HOPT("--loadfactor percent", "hashmap load factor", "%d", loadfactor);
     HOPT("--autosweep yes/no", "automatic eviction sweeps", "%s", autosweep);
-    HOPT("--keysixpack yes/no", "sixpack compress keys", "%s", keysixpack);
+    HOPT("--sixpack yes/no", "sixpack compress keys", "%s", keysixpack);
     HOPT("--cas yes/no", "use compare and store", "%s", usecas);
     HOPT("--allocator name", allocators, "%s", allocator);
     HELP("\n");
